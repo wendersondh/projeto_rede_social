@@ -1,53 +1,70 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import postsReducer from "../store/postsSlice";
 import { PostCard } from "../components/PostCard/PostCard";
 import type { Post } from "../types/Post";
 
-const postMock: Post = {
+
+const makeStore = () =>
+  configureStore({
+    reducer: {
+      posts: postsReducer,
+    },
+    preloadedState: {
+      posts: {
+        posts: [],
+        loading: false,
+        error: null,
+      },
+    },
+  });
+
+const mockPost: Post = {
   id: 1,
-  userId: 5,
-  userName: "Luiz Alberto",
-  userImage: "https://i.pravatar.cc/150?img=3",
-  content:
-    "Essa separação de Domain, Application e Infrastructure ficou bem organizada. Curti bastante!",
+  userId: 10,
+  userName: "Maria Silva",
+  imageUser: "https://randomuser.me/api/portraits/women/44.jpg",
+  content: "Esse é um post de exemplo para o Storybook 🚀",
   isPublic: true,
-  image: null,
-  createdAt: "2025-12-30T17:15:23.307Z",
+  image: "https://picsum.photos/500/300",
+  createdAt: new Date().toISOString(),
   likes: 12,
   comments: 3,
+  likedByMe: false,
 };
 
 const meta: Meta<typeof PostCard> = {
-  title: "RedeSocial/PostCard",
+  title: "Components/PostCard",
   component: PostCard,
   decorators: [
     (Story) => (
-      <div
-        style={{
-          maxWidth: 600,
-          margin: "0 auto",
-          border: "1px solid #e6ecf0",
-        }}
-      >
-        <Story />
-      </div>
+      <Provider store={makeStore()}>
+        <div style={{ maxWidth: 600, margin: "0 auto" }}>
+          <Story />
+        </div>
+      </Provider>
     ),
   ],
-};
-
-export default meta;
-type Story = StoryObj<typeof PostCard>;
-
-export const Padrao: Story = {
   args: {
-    post: postMock,
+    post: mockPost,
+    onOpenComments: (postId: number) => {
+      console.log("Open comments:", postId);
+    },
   },
 };
 
-export const ComImagem: Story = {
+export default meta;
+
+type Story = StoryObj<typeof PostCard>;
+
+export const Padrao: Story = {};
+
+export const SemImagem: Story = {
   args: {
     post: {
-      ...postMock,
-      image: "https://picsum.photos/600/300",
+      ...mockPost,
+      image: null,
     },
   },
 };

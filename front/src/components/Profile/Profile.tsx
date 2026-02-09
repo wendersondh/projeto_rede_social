@@ -66,9 +66,10 @@ export function Profile() {
          
           <button
             className="friends-toggle-btn"
-            
+            disabled
+            title="Em breve"
           >
-             {user.postsCount} posts
+            {user.postsCount} posts
           </button>
 
           <button
